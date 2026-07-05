@@ -1,16 +1,14 @@
-# FSM Sensor Monitoring System with ML Predictive Maintenance
+# FSM Fault Monitoring System with ML Predictive Maintenance
 
-A predictive maintenance framework for a vessel's **PORT Main Engine**. This project bridges the gap between reactive threshold alarms and proactive scheduling by deploying a two-track validation architecture: a data-driven Machine Learning pipeline and a deterministic, hardware-verifiable Finite State Machine (FSM) safety layer.
-
-The entire framework is grounded in real engineering constraints derived from the **Main Engine PLC Input/Output (IO) List**.
+A predictive maintenance framework for a vessel's **PORT Main Engine**, this project bridges the gap between sensor threshold alarms and predictive scheduling by deploying a two-track validation architecture: a data-driven Machine Learning pipeline and a hardware-verifiable Finite State Machine (FSM).
 
 ---
 
 ## 📋 Table of Contents
-* [System Objectives](#-system-objectives)
-* [1: Machine Learning Predictive Maintenance Pipeline (Brief)](#track-1-machine-learning-predictive-maintenance-pipeline-brief)
-* [2: Verilog Finite State Machine (FSM) Deep-Dive](#track-2-verilog-finite-state-machine-fsm-deep-dive)
-* [Cross-Validation Architecture](#-cross-validation-architecture)
+* **System Objectives**
+* **1. Machine Learning Predictive Maintenance Pipeline**
+* **2. Verilog Finite State Machine (FSM)**
+* **Cross-Validation Architecture**
 
 
 ---
@@ -29,7 +27,7 @@ The entire framework is grounded in real engineering constraints derived from th
 
 ---
 
-## 🐍 1: Machine Learning Predictive Maintenance Pipeline 
+## 📊 1: Machine Learning Predictive Maintenance Pipeline 
 
 Implemented in Python on Google Colab, this track handles time-series ingestion, feature engineering, trend forecasting, and automated maintenance planning.
 
@@ -40,14 +38,27 @@ Implemented in Python on Google Colab, this track handles time-series ingestion,
 4. **Predictive Prognostics (O3):** Deploys an **XGBoost Regressor** with a 48-hour lag window to compute a multi-step recursive 30-day forecast. 
 5. **Prescriptive Scheduling (O4):** Multiplies RUL projections by a 20% safety margin to output a planned maintenance event timeline containing parts lists (e.g., fuel injector sets) and labor hour allocations.
 
-### Summary Track Results
+### Summary Results
+
+
 * Identified **108 anomalous hours** (5.0% of a 90-day dataset) focused heavily around simulated injector fouling and oil filter clogging windows.
+  
+<img width="982" height="1010" alt="image" src="https://github.com/user-attachments/assets/7b9b62e6-a7f8-416e-bd2b-4a8add28a329" />
+
+
 * Tracked continuous health decline from an initial **90% (GOOD band)** to a terminal **63.2% (MONITOR band)**.
+  
+<img width="970" height="822" alt="image" src="https://github.com/user-attachments/assets/c48e62b8-73a0-4a67-8406-85899aadc63e" />
+
+
 * Predicted a warning boundary breach for the Exhaust Port Temperature in **4.3 days**, outputting a targeted inspection item scheduled 3.4 days out.
+
+<img width="938" height="768" alt="image" src="https://github.com/user-attachments/assets/b602bc7c-1ebc-4007-9778-6e8e90ea9019" />
+
 
 ---
 
-## 🐍 2: Verilog Finite State Machine (FSM) 
+## ⚡ 2: Verilog Finite State Machine (FSM) 
 
 The structural backbone of the safety-interlock layer is a hardware-equivalent Moore-type Finite State Machine designed in Verilog HDL. It translates discrete health condition flags across 7 critical sensors into high-reliability system states, providing an instantaneous backup checking layer.
 
@@ -65,6 +76,9 @@ Seven safety-critical parameters were isolated out of over 130 PLC signal channe
 | **Plummer Block Brg. Temp.**| RTD (°C) | 35–65 | 75 (hi) | 85 (hi) | 8% |
 
 ### 2. State Machine Logic & State Diagram
+
+<img width="700" height="266" alt="image" src="https://github.com/user-attachments/assets/448e1b65-537f-449a-b48e-2f1e7a1c6e16" />
+
 The FSM is parameterized using 2-bit state registers to enforce a four-tiered structural hierarchy:
 * **`GOOD (2'b00)`:** Default initialization. Validated when all 7 active sensors are registering in their safe `OK` bands.
 * **`MONITOR (2'b01)`:** Stepped up dynamically if **exactly one** sensor drops or rises into its respective `WARN` threshold.
@@ -72,6 +86,12 @@ The FSM is parameterized using 2-bit state registers to enforce a four-tiered st
 * **`CRITICAL (2'b11)`:** The protective override loop. If **any single sensor** encounters an `ALARM` condition, the FSM instantly executes a direct shortcut bypass to `CRITICAL`, discarding intermediate counter states.
 
 ### 3. Simulation Verification (Xilinx Vivado)
+
+<img width="686" height="520" alt="image" src="https://github.com/user-attachments/assets/ca3f1d11-f975-4337-9796-1fa3211ffe35" />
+
+<img width="722" height="472" alt="image" src="https://github.com/user-attachments/assets/091a1bec-edbe-42ac-8028-e765f1f27101" />
+
+
 The module's behavior was validated by applying five sequential, discrete test environments ($T1 \rightarrow T5$) directly to the sensor input vectors within a dedicated testbench:
 
 * **T1 (All Sensors OK):** System outputs `engine_state = GOOD (00)`, `alarm_led = 0`, `shutdown_led = 0`.
@@ -83,10 +103,12 @@ The module's behavior was validated by applying five sequential, discrete test e
 ---
 
 ## 🔄 Cross-Validation Architecture
-The framework pairs two structurally opposing logic layers to validate shipboard operations:
-* **The ML Pipeline (Weighted Average):** Proves optimal for long-term health trending and proactive scheduling since isolated sensor drops are moderated by adjacent healthy parameters.
-* **The Verilog FSM (Worst-Case Logic):** Guarantees high localized safety because a singular lethal fault (e.g., structural breakdown of the lubrication line) is immediately acted upon and can never be "averaged away".
+The framework pairs two structural logic layers to validate shipboard operations:
+* **The ML Pipeline (Weighted Average):** Optimal for long-term health trending and predictive scheduling since isolated sensor drops are moderated by adjacent healthy parameters.
+* **The Verilog FSM (Worst-Case Logic):** Guarantees high safety because a single lethal fault (e.g., structural breakdown of the lubrication line) is immediately acted upon and can never be "averaged away".
 
-Evaluating discrepancies between the ML score bounds and the hardware FSM states gives chief engineers deep, instant insights into whether engine issues are due to single-component failure modes or full, macro system deterioration.
+Evaluating discrepancies between the ML score bounds and the hardware FSM states gives instant insights into whether engine issues are due to single-component failure modes or the full system .
 
 ---
+
+## 📋 Report
