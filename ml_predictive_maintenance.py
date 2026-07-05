@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Minimal Engine Health Monitoring Pipeline"""
+"""Engine Health Monitoring Pipeline"""
 
 !pip install xgboost prophet --quiet
 
