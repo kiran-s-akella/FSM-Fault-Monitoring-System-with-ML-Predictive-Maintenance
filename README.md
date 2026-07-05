@@ -8,7 +8,7 @@ A predictive maintenance framework for a vessel's **PORT Main Engine**, this pro
 * **System Objectives**
 * **1. Machine Learning Predictive Maintenance Pipeline**
 * **2. Verilog Finite State Machine (FSM)**
-* **Cross-Validation Architecture**
+* **Final Validation & Conclusion**
 
 
 ---
@@ -38,7 +38,7 @@ Implemented in Python on Google Colab, this track handles time-series ingestion,
 4. **Predictive Prognostics (O3):** Deploys an **XGBoost Regressor** with a 48-hour lag window to compute a multi-step recursive 30-day forecast. 
 5. **Prescriptive Scheduling (O4):** Multiplies RUL projections by a 20% safety margin to output a planned maintenance event timeline containing parts lists (e.g., fuel injector sets) and labor hour allocations.
 
-### Summary Results
+### Simmulation Results
 
 
 * Identified **108 anomalous hours** (5.0% of a 90-day dataset) focused heavily around simulated injector fouling and oil filter clogging windows.
@@ -102,7 +102,7 @@ The module's behavior was validated by applying five sequential, discrete test e
 
 ---
 
-## 🔄 Cross-Validation Architecture
+## ✅ Final Validation & Conclusion
 The framework pairs two structural logic layers to validate shipboard operations:
 * **The ML Pipeline (Weighted Average):** Optimal for long-term health trending and predictive scheduling since isolated sensor drops are moderated by adjacent healthy parameters.
 * **The Verilog FSM (Worst-Case Logic):** Guarantees high safety because a single lethal fault (e.g., structural breakdown of the lubrication line) is immediately acted upon and can never be "averaged away".
