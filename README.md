@@ -38,7 +38,7 @@ Implemented in Python on Google Colab, this track handles time-series ingestion,
 4. **Predictive Prognostics (O3):** Deploys an **XGBoost Regressor** with a 48-hour lag window to compute a multi-step recursive 30-day forecast. 
 5. **Prescriptive Scheduling (O4):** Multiplies RUL projections by a 20% safety margin to output a planned maintenance event timeline containing parts lists (e.g., fuel injector sets) and labor hour allocations.
 
-### Simmulation Results
+### Simulation Results
 
 
 * Identified **108 anomalous hours** (5.0% of a 90-day dataset) focused heavily around simulated injector fouling and oil filter clogging windows.
